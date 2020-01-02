@@ -1,2 +1,8 @@
-gspread
-oauth2client
+aioify==0.3.2
+aiohttp==3.6.2
+APScheduler==3.6.3
+fastapi==0.45.0
+gspread==3.1.0
+oauth2client==4.1.3
+plaid-python==3.4.0
+uvicorn==0.11.1
