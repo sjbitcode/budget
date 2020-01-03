@@ -4,7 +4,7 @@ import os
 import aiohttp
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi import FastAPI
-from plaid import Client
+# from plaid import Client
 # from plaid.errors import PlaidError
 # import requests
 

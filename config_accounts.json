@@ -1,0 +1,26 @@
+[
+    {
+        "institution": "Chase",
+        "access_token": "access-development-abc",
+        "accounts": [
+            {
+                "mask": "1234",
+                "sheet_cell": "A1"
+            },
+            {
+                "mask": "1212",
+                "sheet_cell": "A2"
+            }
+        ]
+    },
+    {
+        "institution": "Citi",
+        "access_token": "access-development-def",
+        "accounts": [
+            {
+                "mask": "2223",
+                "sheet_cell": "A1"
+            }
+        ]
+    }
+]
