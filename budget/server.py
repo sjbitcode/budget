@@ -1,4 +1,3 @@
-import concurrent.futures
 import threading
 import time
 
@@ -8,42 +7,11 @@ from fastapi import FastAPI
 from plaid import Client
 from plaid.errors import PlaidError
 
-from . import db, settings
+from . import accounts, db, settings
 
 scheduler_running = None
 
 # -------------------------------------------------------------------
-
-
-class PlaidAccount:
-    """
-    This class represents a Plaid Account object,
-    returned from the `/accounts/balance/get` endpoint.
-    """
-    def __init__(self, data={}):
-        self.mask = data.get('mask', '0000')
-        self.name = data.get('name', 'Unnamed Acc')
-        self.account_type = data.get('subtype', '')
-        self._available_balance = data.get('balances', {}).get('available', '0.00')
-        self._current_balance = data.get('balances', {}).get('current', '0.00')
-
-    @property
-    def balance(self):
-        """
-        Current balance is the balance in an account with all transactions taken into account.
-        Available balance is the balance in an account that can be withdrawn at the moment.
-        """
-        if self._available_balance == self._current_balance:
-            return f'${self._available_balance}'
-
-        if self.account_type in ['credit card', 'brokerage']:
-            return f'${self.current_balance}'
-
-        return f'${self._available_balance} -> (${self._current_balance})'
-
-    def __repr__(self):
-        return f'<{self.__class__.__name__}: {self.mask} - {self.name}>'
-
 # -------------------------------------------------------------------
 
 
@@ -56,23 +24,6 @@ client = Client(
 )
 
 app = FastAPI()
-
-
-def get_balance_info(access_token):
-    """
-    Get all account balance info from Plaid client.
-    """
-    print(f'~ getting balance info: {access_token}')
-    try:
-        balance_response = client.Accounts.balance.get(access_token)
-        accounts = {
-            acc.mask: acc
-            for acc in map(lambda item: PlaidAccount(item), balance_response['accounts'])
-        }
-        return accounts
-    except PlaidError as e:
-        print(e)
-        return None
 
 
 def simple_get_balance_info(access_token):
@@ -102,14 +53,11 @@ def update():
     print('~ getting account results')
 
     tokens = db.get_access_tokens()
-    accounts = []
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        results = executor.map(get_balance_info, tokens)
-        accounts = list(results)
+    account_results = accounts.get_account_balances(client, tokens)
+    print('~ got account result', account_results)
 
-    print('~ got account result', accounts)
     print('~ updating spreadsheet')
-    result = update_google_spreadsheet(accounts)
+    result = update_google_spreadsheet(account_results)
     print('~ spreadsheet updated', result)
 
 
