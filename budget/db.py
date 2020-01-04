@@ -11,14 +11,20 @@ def _read_config_from_file():
 _data = _read_config_from_file()
 
 
-def get_accounts(access_token):
-    return _data[access_token]
+def get_accounts():
+    """
+    Get all account objects from all institutions.
+    """
+    accounts = []
+    for institution in _data.values():
+        accounts.extend(institution['accounts'])
+    return accounts
 
 
-def get_account_masks(access_token):
-    accounts = get_accounts(access_token)
-    return [account['mask'] for account in accounts]
+def get_account_ids():
+    accounts = get_accounts()
+    return [account['account_id'] for account in accounts]
 
 
 def get_access_tokens():
-    return _data.keys()
+    return list(_data.keys())

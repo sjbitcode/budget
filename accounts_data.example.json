@@ -1,18 +1,21 @@
 {
     "access-development-abc": {
         "accounts": [{
-                "mask": "1234",
+                "_name": "Some Acc 123",
+                "account_id": "1234",
                 "sheet_cell": "A1"
             },
             {
-                "mask": "1212",
+                "_name": "Some Acc 234",
+                "account_id": "2345",
                 "sheet_cell": "A2"
             }
         ]
     },
     "access-development-def": {
         "accounts": [{
-            "mask": "2223",
+            "_name": "Some Acc 345",
+            "account_id": "3456",
             "sheet_cell": "A1"
         }]
     }

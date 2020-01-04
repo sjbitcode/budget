@@ -1,5 +1,7 @@
 import concurrent.futures
 
+from plaid.errors import PlaidError
+
 
 class PlaidAccount:
     """
@@ -7,9 +9,10 @@ class PlaidAccount:
     returned from the `/accounts/balance/get` endpoint.
     """
     def __init__(self, data={}):
+        self.id = data.get('account_id', 'abcd')
         self.mask = data.get('mask', '0000')
         self.name = data.get('name', 'Unnamed Acc')
-        self.account_type = data.get('subtype', '')
+        self.type = data.get('subtype', '')
         self._available_balance = data.get('balances', {}).get('available', '0.00')
         self._current_balance = data.get('balances', {}).get('current', '0.00')
 
@@ -22,7 +25,7 @@ class PlaidAccount:
         if self._available_balance == self._current_balance:
             return f'${self._available_balance}'
 
-        if self.account_type in ['credit card', 'brokerage']:
+        if self.type in ['credit card', 'brokerage']:
             return f'${self.current_balance}'
 
         return f'${self._available_balance} -> (${self._current_balance})'
@@ -39,7 +42,7 @@ def get_balance_info(client, access_token):
     try:
         balance_response = client.Accounts.balance.get(access_token)
         accounts = {
-            acc.mask: acc
+            acc.id: acc
             for acc in map(lambda item: PlaidAccount(item), balance_response['accounts'])
         }
         return accounts
@@ -49,9 +52,10 @@ def get_balance_info(client, access_token):
 
 
 def get_account_balances(client, access_tokens):
-    accounts = []
+    accounts = {}
     with concurrent.futures.ThreadPoolExecutor() as executor:
         args = [(client, token) for token in access_tokens]
         results = executor.map(lambda p: get_balance_info(*p), args)
-        accounts = list(results)
+        for result in results:
+            accounts.update(result)
     return accounts

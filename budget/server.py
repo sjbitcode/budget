@@ -5,7 +5,6 @@ import requests
 import schedule
 from fastapi import FastAPI
 from plaid import Client
-from plaid.errors import PlaidError
 
 from . import accounts, db, settings
 
