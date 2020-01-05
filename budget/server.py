@@ -56,11 +56,11 @@ def update():
 
     tokens = db.get_access_tokens()
     account_results = accounts.get_account_balances(client, tokens)
-    logger.info('~ got account result', account_results)
+    logger.info(f'~ got account result {account_results}')
 
     logger.info('~ updating spreadsheet')
     result = update_google_spreadsheet(account_results, sheet)
-    logger.info('~ spreadsheet updated', result)
+    logger.info(f'~ spreadsheet updated { result}')
 
 
 # ---
