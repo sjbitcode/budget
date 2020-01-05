@@ -4,7 +4,6 @@ from . import settings
 
 
 def _read_config_from_file():
-    print(settings.DATA_PATH)
     with open(settings.DATA_PATH, 'r') as fp:
         return json.load(fp)
 
