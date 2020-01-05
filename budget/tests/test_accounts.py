@@ -28,4 +28,4 @@ def test__plaid_account__balance__when_account_is_of_different_type(account_type
 
 def test__plaid_account__balance(plaid_accounts_json):
     account = PlaidAccount(plaid_accounts_json[1])
-    assert account.balance == '$897 -> $2174'
+    assert account.balance == '$897 -- $2174'

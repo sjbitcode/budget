@@ -35,4 +35,4 @@ def update_google_spreadsheet(sheet, account_results):
     ny_time = timezone('America/New_York')
     now = datetime.datetime.now(tz=ny_time).strftime('%B %d %Y - %I:%M:%S %p')
     logger.info(f'~ updating last updated time to {now}')
-    update_sheet_cell(sheet, 'F4', now)
+    update_sheet_cell(sheet, 'D12', now)

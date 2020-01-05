@@ -31,7 +31,7 @@ class PlaidAccount:
         if self.type in ['credit card', 'brokerage', 'ira']:
             return f'${self._current_balance}'
 
-        return f'${self._available_balance} -> ${self._current_balance}'
+        return f'${self._available_balance} -- ${self._current_balance}'
 
     def __repr__(self):
         return f'<{self.__class__.__name__}: {self.mask} - {self.name}>'
