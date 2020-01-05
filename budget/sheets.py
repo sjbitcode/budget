@@ -1,5 +1,6 @@
 import datetime
 import logging
+from pytz import timezone
 
 from . import db
 
@@ -31,6 +32,7 @@ def update_google_spreadsheet(sheet, account_results):
         update_sheet_cell(sheet, cell, account.balance)
 
     # update last update
-    now = datetime.datetime.now().strftime('%B %d %Y - %I:%M:%S %p')
+    ny_time = timezone('America/New_York')
+    now = datetime.datetime.now(ny_time).strftime('%B %d %Y - %I:%M:%S %p')
     logger.info(f'~ updating last updated time to {now}')
     update_sheet_cell(sheet, 'F4', now)
