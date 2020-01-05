@@ -6,9 +6,8 @@ from fastapi import FastAPI
 from plaid import Client
 import requests
 import schedule
-from sheetfu import SpreadsheetApp
 
-from . import accounts, db, settings
+from . import accounts, db, settings, sheets
 
 scheduler_running = None
 
@@ -24,10 +23,8 @@ client = Client(
     environment=settings.PLAID_ENVIRONMENT,
 )
 
-# Init Sheetfu client and get spreadsheet.
-sheetfu_client = SpreadsheetApp(settings.SPREADSHEET_CREDS)
-spreadsheet = sheetfu_client.open_by_id(spreadsheet_id=settings.SPREADSHEET_ID)
-sheet = spreadsheet.get_sheet_by_name(settings.SHEET_NAME)
+# Sheetfu spreadsheet sheet.
+sheet = sheets.sheet
 
 app = FastAPI()
 
@@ -43,14 +40,6 @@ def simple_get_balance_info(access_token):
     # return Account({'name': f'Account {uuid[:7]}'})
 
 
-def update_sheet_cell(sheet, cell, value):
-    """
-    Update a single cell with a value in sheet.
-    """
-    data_range = sheet.get_range_from_a1(f'{cell}:{cell}')
-    data_range.set_value(value)
-
-
 def update_google_spreadsheet(account_results, sheet):
     print('~ update_google_spreadsheet')
 
@@ -63,11 +52,12 @@ def update_google_spreadsheet(account_results, sheet):
     # update balance in cells
     for account in accounts_to_update.values():
         cell = db.get_account_cell(account.id)
-        update_sheet_cell(sheet, cell, account.balance)
+        sheets.update_sheet_cell(sheet, cell, account.balance)
 
     # update last update
     now = datetime.datetime.now().strftime('%Y-%m-%d %H:%m')
-    update_sheet_cell(sheet, 'F4', now)
+    print(f'~ updating last updated time to {now}')
+    sheets.update_sheet_cell(sheet, 'F4', now)
 
 
 def update():

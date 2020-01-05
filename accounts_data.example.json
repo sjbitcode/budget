@@ -3,12 +3,12 @@
         "accounts": [{
                 "_name": "Chase sndbx checking 1",
                 "account_id": "J61a6XbgK4tdgb9oDWlWFvJkPAl5v3Cd4o36Z",
-                "sheet_cell": "A1"
+                "sheet_cell": "D2"
             },
             {
                 "_name": "Chase sndbx checking 2",
                 "account_id": "kPJbPBmZrxF9lnqN6RMRhna7NQD9n4iWQzn6q",
-                "sheet_cell": "A2"
+                "sheet_cell": "D4"
             }
         ]
     },
@@ -16,7 +16,7 @@
         "accounts": [{
             "_name": "Citi sndbx ira 3",
             "account_id": "geL8n5EpAbCwQmrzgJbdUrWVQxer5nugV4lQB",
-            "sheet_cell": "A3"
+            "sheet_cell": "D3"
         }]
     }
 }
