@@ -1,7 +1,7 @@
 import pytest
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True)
 def test_envs(monkeypatch):
     monkeypatch.setenv('DATA_PATH', 'accounts_data.example.json')
 
