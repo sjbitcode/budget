@@ -1,49 +1,27 @@
-import datetime
 import logging
-import threading
-import time
 
+import schedule
 from fastapi import FastAPI
 from plaid import Client
-import schedule
+from sheetfu import SpreadsheetApp
 
-from . import accounts, db, settings, sheets
+from . import accounts, db, events, settings, sheets
+
 
 logger = logging.getLogger(__name__)
-scheduler_running = None
 
 # Init Plaid client.
-client = Client(
-    client_id=settings.PLAID_CLIENT_ID,
-    secret=settings.PLAID_SECRET,
-    public_key=settings.PLAID_PUBLIC_KEY,
-    environment=settings.PLAID_ENVIRONMENT,
-)
+client = Client(client_id=settings.PLAID_CLIENT_ID,
+                secret=settings.PLAID_SECRET,
+                public_key=settings.PLAID_PUBLIC_KEY,
+                environment=settings.PLAID_ENVIRONMENT)
 
-# Sheetfu spreadsheet sheet.
-sheet = sheets.sheet
+# Init Sheetfu client and get spreadsheet.
+sheet = (SpreadsheetApp(settings.SPREADSHEET_CREDS)
+         .open_by_id(spreadsheet_id=settings.SPREADSHEET_ID)
+         .get_sheet_by_name(settings.SHEET_NAME))
 
 app = FastAPI()
-
-
-def update_google_spreadsheet(account_results, sheet):
-    logger.info('~ update_google_spreadsheet')
-
-    # filter the account_results
-    account_ids = db.get_account_ids()
-    accounts_to_update = {
-        account_id: account_results[account_id]
-        for account_id in account_ids
-    }
-    # update balance in cells
-    for account in accounts_to_update.values():
-        cell = db.get_account_cell(account.id)
-        sheets.update_sheet_cell(sheet, cell, account.balance)
-
-    # update last update
-    now = datetime.datetime.now().strftime('%B %d %Y - %I:%M:%S %p')
-    logger.info(f'~ updating last updated time to {now}')
-    sheets.update_sheet_cell(sheet, 'F4', now)
 
 
 def update():
@@ -59,50 +37,26 @@ def update():
     logger.info(f'~ got account result {account_results}')
 
     logger.info('~ updating spreadsheet')
-    result = update_google_spreadsheet(account_results, sheet)
+    result = sheets.update_google_spreadsheet(sheet, account_results)
     logger.info(f'~ spreadsheet updated { result}')
 
 
 # ---
 
 
-def setup_scheduler():
-    global scheduler_running
-
-    def run_continuously():
-        while scheduler_running:
-            schedule.run_pending()
-            time.sleep(1)
-
-    thread = threading.Thread(target=run_continuously)
-    thread.daemon = True
-    logger.info('~ starting continuous thread')
-    scheduler_running = True
-    thread.start()
-
-
-def teardown_scheduler():
-    global scheduler_running
-    scheduler_running = False
-
-
 @app.on_event('startup')
 def startup():
     logger.info('~ setting up jobs')
-    setup_scheduler()
+    events.setup_scheduler()
     schedule.every(int(settings.UPDATE_INTERVAL)).minutes.do(update)
 
 
 @app.on_event('shutdown')
 def shutdown():
     logger.info('~ tearing down jobs')
-    teardown_scheduler()
+    events.teardown_scheduler()
 
 
 @app.get('/')
 def index():
     return {'app': 'Budget API'}
-
-
-# Run the server with:
-#    uvicorn server:app --reload
