@@ -18,7 +18,7 @@ def test__plaid_account__balance_when_available_and_current_is_the_same(plaid_ac
     assert account.balance == '$1600'
 
 
-@pytest.mark.parametrize('account_type', ['credit card', 'brokerage'])
+@pytest.mark.parametrize('account_type', ['credit card', 'brokerage', 'ira'])
 def test__plaid_account__balance__when_account_is_of_different_type(account_type, plaid_accounts_json):
     account_json = plaid_accounts_json[1]
     account_json['subtype'] = account_type

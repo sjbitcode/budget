@@ -1,19 +1,16 @@
 import datetime
+import logging
 import threading
 import time
 
 from fastapi import FastAPI
 from plaid import Client
-import requests
 import schedule
 
 from . import accounts, db, settings, sheets
 
+logger = logging.getLogger(__name__)
 scheduler_running = None
-
-# -------------------------------------------------------------------
-# -------------------------------------------------------------------
-
 
 # Init Plaid client.
 client = Client(
@@ -29,19 +26,8 @@ sheet = sheets.sheet
 app = FastAPI()
 
 
-def simple_get_balance_info(access_token):
-    """
-    Get all account balance info from Plaid client.
-    """
-    print(f'~ getting balance info: {access_token}')
-    response = requests.get('https://httpbin.org/uuid')
-    uuid = response.json()['uuid']
-    return uuid
-    # return Account({'name': f'Account {uuid[:7]}'})
-
-
 def update_google_spreadsheet(account_results, sheet):
-    print('~ update_google_spreadsheet')
+    logger.info('~ update_google_spreadsheet')
 
     # filter the account_results
     account_ids = db.get_account_ids()
@@ -56,7 +42,7 @@ def update_google_spreadsheet(account_results, sheet):
 
     # update last update
     now = datetime.datetime.now().strftime('%B %d %Y - %I:%M:%S %p')
-    print(f'~ updating last updated time to {now}')
+    logger.info(f'~ updating last updated time to {now}')
     sheets.update_sheet_cell(sheet, 'F4', now)
 
 
@@ -66,15 +52,15 @@ def update():
       - Get all account balances.
       - Push account data to google spreadsheet.
     """
-    print('~ getting account results')
+    logger.info('~ getting account results')
 
     tokens = db.get_access_tokens()
     account_results = accounts.get_account_balances(client, tokens)
-    print('~ got account result', account_results)
+    logger.info(f'~ got account result {account_results}')
 
-    print('~ updating spreadsheet')
+    logger.info('~ updating spreadsheet')
     result = update_google_spreadsheet(account_results, sheet)
-    print('~ spreadsheet updated', result)
+    logger.info(f'~ spreadsheet updated { result}')
 
 
 # ---
@@ -90,7 +76,7 @@ def setup_scheduler():
 
     thread = threading.Thread(target=run_continuously)
     thread.daemon = True
-    print('~ starting continuous thread')
+    logger.info('~ starting continuous thread')
     scheduler_running = True
     thread.start()
 
@@ -102,15 +88,14 @@ def teardown_scheduler():
 
 @app.on_event('startup')
 def startup():
-    print('~ setting up jobs')
+    logger.info('~ setting up jobs')
     setup_scheduler()
     schedule.every(int(settings.UPDATE_INTERVAL)).minutes.do(update)
-    # update()
 
 
 @app.on_event('shutdown')
 def shutdown():
-    print('~ tearing down jobs')
+    logger.info('~ tearing down jobs')
     teardown_scheduler()
 
 
