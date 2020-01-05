@@ -26,7 +26,7 @@ class PlaidAccount:
             return f'${self._available_balance}'
 
         if self.type in ['credit card', 'brokerage']:
-            return f'${self.current_balance}'
+            return f'${self._current_balance}'
 
         return f'${self._available_balance} -> (${self._current_balance})'
 
