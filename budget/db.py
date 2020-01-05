@@ -28,3 +28,9 @@ def get_account_ids():
 
 def get_access_tokens():
     return list(_data.keys())
+
+
+def get_account_cell(account_id):
+    for account in get_accounts():
+        if account['account_id'] == account_id:
+            return account['sheet_cell']
