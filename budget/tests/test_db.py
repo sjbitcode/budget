@@ -1,4 +1,4 @@
-def test__get_accounts(test_envs):
+def test__get_accounts():
     from budget import db
     accounts = db.get_accounts()
     assert accounts[0] == {'_name': 'Some Acc 123', 'account_id': '1234', 'sheet_cell': 'A1'}
@@ -16,3 +16,8 @@ def test__get_access_tokens():
     from budget import db
     access_tokens = db.get_access_tokens()
     assert access_tokens == ['access-development-abc', 'access-development-def']
+
+
+def test__get_sheet_cell():
+    from budget import db
+    assert db.get_account_cell('1234') == 'A1'
