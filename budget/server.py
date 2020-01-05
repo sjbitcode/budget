@@ -7,11 +7,7 @@ from sheetfu import SpreadsheetApp
 
 from . import accounts, db, events, settings, sheets
 
-
 logger = logging.getLogger(__name__)
-logging.getLogger('googleapiclient.discovery').setLevel(logging.WARNING)
-logging.getLogger('oauth2client.client').setLevel(logging.WARNING)
-logging.getLogger('oauth2client.transport').setLevel(logging.WARNING)
 
 # Init Plaid client.
 client = Client(client_id=settings.PLAID_CLIENT_ID,
