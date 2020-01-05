@@ -55,7 +55,7 @@ def update_google_spreadsheet(account_results, sheet):
         sheets.update_sheet_cell(sheet, cell, account.balance)
 
     # update last update
-    now = datetime.datetime.now().strftime('%Y-%m-%d %H:%m')
+    now = datetime.datetime.now().strftime('%B %d %Y - %I:%M:%S %p')
     print(f'~ updating last updated time to {now}')
     sheets.update_sheet_cell(sheet, 'F4', now)
 
