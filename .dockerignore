@@ -129,12 +129,10 @@ dmypy.json
 .pyre/
 
 # Misc
-creds.json
 .DS_Store
 .vscode
 deploy
 tmp/
-accounts_data.json
 run.sh
 Dockerfile
 docker-compose*

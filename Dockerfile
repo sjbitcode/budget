@@ -32,7 +32,8 @@ ENV APP_NAME=budget \
     APP_PATH=/app \
     PATH=/opt/local/bin:$PATH \
     PYTHONPATH=/opt/local/lib/python3.7/site-packages:/app/budget \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    TERM=xterm-256color
 
 WORKDIR $APP_PATH
 
