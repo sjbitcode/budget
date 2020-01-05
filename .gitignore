@@ -136,3 +136,4 @@ deploy
 tmp/
 accounts_data.json
 run.sh
+copy.sh
