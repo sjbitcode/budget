@@ -87,7 +87,7 @@ def teardown_scheduler():
 def startup():
     print('~ setting up jobs')
     setup_scheduler()
-    schedule.every(2).minutes.do(update)
+    schedule.every(settings.UPDATE_INTERVAL).minutes.do(update)
     # update()
 
 

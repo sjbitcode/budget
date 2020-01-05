@@ -11,4 +11,7 @@ SPREADSHEET_CREDS = os.getenv('SPREADSHEET_CREDS')  # creds.json
 SPREADSHEET_ID = os.getenv('SPREADSHEET_ID')
 SHEET_NAME = os.getenv('SHEET_NAME')
 
+# Update interval
+UPDATE_INTERVAL = os.getenv('UPDATE_INTERVAL')
+
 DATA_PATH = os.getenv('DATA_PATH')
