@@ -14,4 +14,4 @@ SHEET_NAME = os.getenv('SHEET_NAME')
 # Update interval
 UPDATE_INTERVAL = os.getenv('UPDATE_INTERVAL')
 
-DATA_PATH = os.getenv('DATA_PATH')
+DATA_PATH = os.getenv('DATA_PATH')  # accounts_data.json

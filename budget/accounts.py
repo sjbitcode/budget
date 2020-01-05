@@ -1,6 +1,9 @@
 import concurrent.futures
+import logging
 
 from plaid.errors import PlaidError
+
+logger = logging.getLogger(__name__)
 
 
 class PlaidAccount:
@@ -38,7 +41,7 @@ def get_balance_info(client, access_token):
     """
     Get all account balance info from Plaid client.
     """
-    print(f'~ getting balance info: {access_token}')
+    logging.info(f'~ getting balance info: {access_token}')
     try:
         balance_response = client.Accounts.balance.get(access_token)
         accounts = {
